@@ -1,0 +1,291 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Fornecedor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Fornecedor` (
+  `ID_Fornecedor` INT NOT NULL,
+  `Nome_Fornecedor` VARCHAR(45) NULL,
+  `ID_Produto` VARCHAR(45) NULL,
+  `ID_Categoria` INT NULL,
+  PRIMARY KEY (`ID_Fornecedor`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Produtos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Produtos` (
+  `ID_Produto` INT NOT NULL,
+  `Nome do Produto` VARCHAR(45) NULL,
+  `Preço` DECIMAL(10,2) NULL,
+  `ID_Categoria` INT NULL,
+  `Produtoscol` VARCHAR(45) NULL,
+  `ID_Fornecedor` INT NULL,
+  PRIMARY KEY (`ID_Produto`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Fornecedor_has_Produtos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Fornecedor_has_Produtos` (
+  `Fornecedor_ID_Fornecedor` INT NOT NULL,
+  `Produtos_ID_Produto` INT NOT NULL,
+  PRIMARY KEY (`Fornecedor_ID_Fornecedor`, `Produtos_ID_Produto`),
+  INDEX `fk_Fornecedor_has_Produtos_Produtos1_idx` (`Produtos_ID_Produto` ASC) VISIBLE,
+  INDEX `fk_Fornecedor_has_Produtos_Fornecedor_idx` (`Fornecedor_ID_Fornecedor` ASC) VISIBLE,
+  CONSTRAINT `fk_Fornecedor_has_Produtos_Fornecedor`
+    FOREIGN KEY (`Fornecedor_ID_Fornecedor`)
+    REFERENCES `mydb`.`Fornecedor` (`ID_Fornecedor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Fornecedor_has_Produtos_Produtos1`
+    FOREIGN KEY (`Produtos_ID_Produto`)
+    REFERENCES `mydb`.`Produtos` (`ID_Produto`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Itens do Pedido`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Itens do Pedido` (
+  `Número do Pedido` INT NOT NULL,
+  `Quantidade` INT NULL,
+  `Preço Unitário` DECIMAL(10) NULL,
+  `ID_Produto` INT NULL,
+  PRIMARY KEY (`Número do Pedido`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Produtos_has_Itens do Pedido`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Produtos_has_Itens do Pedido` (
+  `Produtos_ID_Produto` INT NOT NULL,
+  `Itens do Pedido_Número do Pedido` INT NOT NULL,
+  PRIMARY KEY (`Produtos_ID_Produto`, `Itens do Pedido_Número do Pedido`),
+  INDEX `fk_Produtos_has_Itens do Pedido_Itens do Pedido1_idx` (`Itens do Pedido_Número do Pedido` ASC) VISIBLE,
+  INDEX `fk_Produtos_has_Itens do Pedido_Produtos1_idx` (`Produtos_ID_Produto` ASC) VISIBLE,
+  CONSTRAINT `fk_Produtos_has_Itens do Pedido_Produtos1`
+    FOREIGN KEY (`Produtos_ID_Produto`)
+    REFERENCES `mydb`.`Produtos` (`ID_Produto`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Produtos_has_Itens do Pedido_Itens do Pedido1`
+    FOREIGN KEY (`Itens do Pedido_Número do Pedido`)
+    REFERENCES `mydb`.`Itens do Pedido` (`Número do Pedido`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Categorias`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Categorias` (
+  `ID_Categoria` INT NOT NULL,
+  `Nome_Categoria` VARCHAR(100) NULL,
+  PRIMARY KEY (`ID_Categoria`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Categorias_has_Produtos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Categorias_has_Produtos` (
+  `Categorias_ID_Categoria` INT NOT NULL,
+  `Produtos_ID_Produto` INT NOT NULL,
+  PRIMARY KEY (`Categorias_ID_Categoria`, `Produtos_ID_Produto`),
+  INDEX `fk_Categorias_has_Produtos_Produtos1_idx` (`Produtos_ID_Produto` ASC) VISIBLE,
+  INDEX `fk_Categorias_has_Produtos_Categorias1_idx` (`Categorias_ID_Categoria` ASC) VISIBLE,
+  CONSTRAINT `fk_Categorias_has_Produtos_Categorias1`
+    FOREIGN KEY (`Categorias_ID_Categoria`)
+    REFERENCES `mydb`.`Categorias` (`ID_Categoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Categorias_has_Produtos_Produtos1`
+    FOREIGN KEY (`Produtos_ID_Produto`)
+    REFERENCES `mydb`.`Produtos` (`ID_Produto`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Pagamentos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Pagamentos` (
+  `Código do Pagamento` INT NOT NULL,
+  `Forma de Pagamento` VARCHAR(45) NULL,
+  PRIMARY KEY (`Código do Pagamento`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Entregas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Entregas` (
+  `Código_Entrega` INT NOT NULL,
+  `Número do Pedido` VARCHAR(45) NULL,
+  `Data de previsão de entrega` DATE NULL,
+  `Código de Rastreio` INT NULL,
+  PRIMARY KEY (`Código_Entrega`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Pedidos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Pedidos` (
+  `Número do Pedido` INT NOT NULL,
+  `Status do Pedido` VARCHAR(45) NULL,
+  `Valor Total` DECIMAL(10) NULL,
+  `ID_Cliente` INT NULL,
+  `Data do Pedido` DATE NULL,
+  `Itens do Pedido_Número do Pedido` INT NOT NULL,
+  `Pagamentos_Código do Pagamento` INT NOT NULL,
+  `Entregas_Código_Entrega` INT NOT NULL,
+  PRIMARY KEY (`Número do Pedido`),
+  INDEX `fk_Pedidos_Itens do Pedido1_idx` (`Itens do Pedido_Número do Pedido` ASC) VISIBLE,
+  INDEX `fk_Pedidos_Pagamentos1_idx` (`Pagamentos_Código do Pagamento` ASC) VISIBLE,
+  INDEX `fk_Pedidos_Entregas1_idx` (`Entregas_Código_Entrega` ASC) VISIBLE,
+  CONSTRAINT `fk_Pedidos_Itens do Pedido1`
+    FOREIGN KEY (`Itens do Pedido_Número do Pedido`)
+    REFERENCES `mydb`.`Itens do Pedido` (`Número do Pedido`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Pedidos_Pagamentos1`
+    FOREIGN KEY (`Pagamentos_Código do Pagamento`)
+    REFERENCES `mydb`.`Pagamentos` (`Código do Pagamento`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Pedidos_Entregas1`
+    FOREIGN KEY (`Entregas_Código_Entrega`)
+    REFERENCES `mydb`.`Entregas` (`Código_Entrega`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Clientes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Clientes` (
+  `ID_Cliente` INT NOT NULL,
+  `Nome` VARCHAR(45) NULL,
+  `Email` VARCHAR(45) NULL,
+  `Endereço` VARCHAR(45) NULL,
+  `Telefone` VARCHAR(45) NULL,
+  `Data de Cadastro` DATE NULL,
+  `Pedidos_Número do Pedido` INT NOT NULL,
+  PRIMARY KEY (`ID_Cliente`),
+  INDEX `fk_Clientes_Pedidos1_idx` (`Pedidos_Número do Pedido` ASC) VISIBLE,
+  CONSTRAINT `fk_Clientes_Pedidos1`
+    FOREIGN KEY (`Pedidos_Número do Pedido`)
+    REFERENCES `mydb`.`Pedidos` (`Número do Pedido`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`ProdutoCategoria`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`ProdutoCategoria` (
+  `ID_Produto` INT NOT NULL,
+  `ID_Categoria` INT NOT NULL,
+  PRIMARY KEY (`ID_Produto`, `ID_Categoria`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Categorias_has_ProdutoCategoria`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Categorias_has_ProdutoCategoria` (
+  `Categorias_ID_Categoria` INT NOT NULL,
+  `ProdutoCategoria_ID_Produto` INT NOT NULL,
+  `ProdutoCategoria_ID_Categoria` INT NOT NULL,
+  PRIMARY KEY (`Categorias_ID_Categoria`, `ProdutoCategoria_ID_Produto`, `ProdutoCategoria_ID_Categoria`),
+  INDEX `fk_Categorias_has_ProdutoCategoria_ProdutoCategoria1_idx` (`ProdutoCategoria_ID_Produto` ASC, `ProdutoCategoria_ID_Categoria` ASC) VISIBLE,
+  INDEX `fk_Categorias_has_ProdutoCategoria_Categorias1_idx` (`Categorias_ID_Categoria` ASC) VISIBLE,
+  CONSTRAINT `fk_Categorias_has_ProdutoCategoria_Categorias1`
+    FOREIGN KEY (`Categorias_ID_Categoria`)
+    REFERENCES `mydb`.`Categorias` (`ID_Categoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Categorias_has_ProdutoCategoria_ProdutoCategoria1`
+    FOREIGN KEY (`ProdutoCategoria_ID_Produto` , `ProdutoCategoria_ID_Categoria`)
+    REFERENCES `mydb`.`ProdutoCategoria` (`ID_Produto` , `ID_Categoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`ProdutoCategoria_has_Produtos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`ProdutoCategoria_has_Produtos` (
+  `ProdutoCategoria_ID_Produto` INT NOT NULL,
+  `ProdutoCategoria_ID_Categoria` INT NOT NULL,
+  `Produtos_ID_Produto` INT NOT NULL,
+  PRIMARY KEY (`ProdutoCategoria_ID_Produto`, `ProdutoCategoria_ID_Categoria`, `Produtos_ID_Produto`),
+  INDEX `fk_ProdutoCategoria_has_Produtos_Produtos1_idx` (`Produtos_ID_Produto` ASC) VISIBLE,
+  INDEX `fk_ProdutoCategoria_has_Produtos_ProdutoCategoria1_idx` (`ProdutoCategoria_ID_Produto` ASC, `ProdutoCategoria_ID_Categoria` ASC) VISIBLE,
+  CONSTRAINT `fk_ProdutoCategoria_has_Produtos_ProdutoCategoria1`
+    FOREIGN KEY (`ProdutoCategoria_ID_Produto` , `ProdutoCategoria_ID_Categoria`)
+    REFERENCES `mydb`.`ProdutoCategoria` (`ID_Produto` , `ID_Categoria`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ProdutoCategoria_has_Produtos_Produtos1`
+    FOREIGN KEY (`Produtos_ID_Produto`)
+    REFERENCES `mydb`.`Produtos` (`ID_Produto`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+SELECT * 
+FROM information_schema.tables
+WHERE table_schema = 'mydb';
+
+SELECT * 
+FROM information_schema.columns
+WHERE table_schema = 'mydb';
+
+
+SELECT * FROM `mydb`.`Fornecedor`;
+SELECT * FROM `mydb`.`Produtos`;
+SELECT * FROM `mydb`.`Fornecedor_has_Produtos`;
+SELECT * FROM `mydb`.`Itens do Pedido`;
+SELECT * FROM `mydb`.`Produtos_has_Itens do Pedido`;
+SELECT * FROM `mydb`.`Categorias`;
+SELECT * FROM `mydb`.`Categorias_has_Produtos`;
+SELECT * FROM `mydb`.`Pagamentos`;
+SELECT * FROM `mydb`.`Entregas`;
+SELECT * FROM `mydb`.`Pedidos`;
+SELECT * FROM `mydb`.`Clientes`;
+SELECT * FROM `mydb`.`ProdutoCategoria`;
+SELECT * FROM `mydb`.`Categorias_has_ProdutoCategoria`;
+SELECT * FROM `mydb`.`ProdutoCategoria_has_Produtos`;
+
